@@ -5,9 +5,7 @@ set -euo pipefail
 # Export all config values from $1
 export_all() {
     FILE="${1}"
-    awk -F "=" '{
-        print "::set-output name=" $1 "::"$2
-    }' "${FILE}"
+    cat "${FILE}" >> "${GITHUB_OUTPUT}"
 }
 
 export_all "module.prop"

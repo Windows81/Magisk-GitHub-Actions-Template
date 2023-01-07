@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get variables
         id: vars
         run: bash .github/bin/variables.sh
@@ -38,13 +38,13 @@ jobs:
       - get_vars
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: Checkout
       - name: Create module ZIP
         id: zip
         run: |
           ZIPNAME=${{ needs.get_vars.outputs.id }}-${{ needs.get_vars.outputs.version }}.zip
-          echo ::set-output name=zipname::$ZIPNAME
+          echo zipname=$ZIPNAME >> $GITHUB_OUTPUT
           zip -0qry ./$ZIPNAME * -x .github ${{ needs.get_vars.outputs.zip_exclude }}
       
       - name: Generate update JSON
