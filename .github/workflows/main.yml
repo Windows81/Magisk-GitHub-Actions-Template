@@ -6,7 +6,7 @@ name: Generate update JSON and release module
 
 on:
   push:
-    tags:
+    branches:
       - "*"
 
 jobs:
