@@ -41,13 +41,13 @@ jobs:
         name: Checkout
 
       - name: Get variables
-        run: ./.github/bin/variables.sh >> "${GITHUB_ENV}"
+        run: sh ./.github/bin/variables.sh >> "${GITHUB_ENV}"
 
       - name: Create module ZIP
-        run: ./.github/bin/createZip.sh >> "${GITHUB_ENV}"
+        run: sh ./.github/bin/createZip.sh >> "${GITHUB_ENV}"
 
       - name: Add update JSON to module.prop
-        run: ./.github/bin/refineModule.sh
+        run: sh ./.github/bin/refineModule.sh
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -58,7 +58,7 @@ jobs:
             update.json
 
       - name: Generate update JSON
-        run: bash .github/bin/updateJson.sh ${{ env.version }} ${{ env.versionCode }} ${{ env.changelog }} ${{ env.zipname }}
+        run: sh ./.github/bin/updateJson.sh ${{ env.version }} ${{ env.versionCode }} ${{ env.changelog }} ${{ env.zipname }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
