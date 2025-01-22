@@ -59,6 +59,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag: "v${{ env.versionCode }}"
           files: |
             ${{ env.changelog }}
             ${{ env.zipname }}
@@ -66,11 +67,3 @@ jobs:
 
       - name: Generate update JSON
         run: ./.github/bin/updateJson.sh "${{ env.version }}" "${{ env.versionCode }}" "${{ env.changelog }}" "${{ env.zipname }}"
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ${{ env.changelog }}
-            ${{ env.zipname }}
-            update.json
