@@ -23,11 +23,11 @@ jobs:
       - name: Get variables
         run: ./.github/bin/variables.sh >> "${GITHUB_ENV}"
 
-      - name: Create module ZIP
-        run: ./.github/bin/createZip.sh "${{ env.zipname }}" "${{ env.version }}" "${{ env.zip_exclude }}" >> "${GITHUB_ENV}"
-
       - name: Add update JSON to module.prop
         run: ./.github/bin/refineModule.sh
+
+      - name: Create module ZIP
+        run: ./.github/bin/createZip.sh "${{ env.id }}" "${{ env.version }}" "${{ env.zip_exclude }}" >> "${GITHUB_ENV}"
 
       - name: Release
         uses: softprops/action-gh-release@v1
