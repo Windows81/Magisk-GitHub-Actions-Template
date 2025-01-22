@@ -53,17 +53,17 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ changelog }}
-            ${{ zipname }}
+            ${{ env.changelog }}
+            ${{ env.zipname }}
             update.json
 
       - name: Generate update JSON
-        run: bash .github/bin/updateJson.sh ${{ version }} ${{ versionCode }} ${{ changelog }} ${{ steps.zip.outputs.zipname }}
+        run: bash .github/bin/updateJson.sh ${{ env.version }} ${{ env.versionCode }} ${{ env.changelog }} ${{ env.zipname }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ changelog }}
-            ${{ steps.zip.outputs.zipname }}
+            ${{ env.changelog }}
+            ${{ env.zipname }}
             update.json
