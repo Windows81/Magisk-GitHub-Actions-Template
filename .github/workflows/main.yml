@@ -51,7 +51,7 @@ jobs:
         run: ./.github/bin/variables.sh >> "${GITHUB_ENV}"
 
       - name: Create module ZIP
-        run: ./.github/bin/createZip.sh ${{ env.zipname }} ${{ env.version }} ${{ env.zip_exclude }} >> "${GITHUB_ENV}"
+        run: ./.github/bin/createZip.sh "${{ env.zipname }}" "${{ env.version }}" "${{ env.zip_exclude }}" >> "${GITHUB_ENV}"
 
       - name: Add update JSON to module.prop
         run: ./.github/bin/refineModule.sh
@@ -65,7 +65,7 @@ jobs:
             update.json
 
       - name: Generate update JSON
-        run: ./.github/bin/updateJson.sh ${{ env.version }} ${{ env.versionCode }} ${{ env.changelog }} ${{ env.zipname }}
+        run: ./.github/bin/updateJson.sh "${{ env.version }}" "${{ env.versionCode }}" "${{ env.changelog }}" "${{ env.zipname }}"
 
       - name: Release
         uses: softprops/action-gh-release@v1
