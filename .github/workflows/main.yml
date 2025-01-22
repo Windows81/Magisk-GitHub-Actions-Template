@@ -10,33 +10,6 @@ on:
       - "*"
 
 jobs:
-  get_vars:
-    name: Get module variables from "module.prop" and "config.prop"
-    runs-on: ubuntu-latest
-    outputs:
-      # Module.prop variables
-      id: ${{ steps.collect.outputs.id }}
-      name: ${{ steps.collect.outputs.name }}
-      version: ${{ steps.collect.outputs.version }}
-      versionCode: ${{ steps.collect.outputs.versionCode }}
-      author: ${{ steps.collect.outputs.author }}
-      description: ${{ steps.collect.outputs.description }}
-
-      # Config.prop variables
-      zip_exclude: ${{ steps.collect.outputs.zip_exclude }}
-      changelog: ${{ steps.collect.outputs.changelog }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Prepare shell
-        run: chmod 777 ./.github/bin/*
-
-      - name: Get variables
-        run: ./.github/bin/variables.sh >> "${GITHUB_OUTPUT}"
-        id: collect
-
   create_release:
     name: Create release
     runs-on: ubuntu-latest
@@ -59,7 +32,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag: "v${{ env.versionCode }}"
+          tag_name: "v${{ env.versionCode }}"
           files: |
             ${{ env.changelog }}
             ${{ env.zipname }}
