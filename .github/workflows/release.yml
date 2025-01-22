@@ -7,53 +7,63 @@ name: Generate update JSON and release module
 on:
   push:
     tags:
-      - '*'
-  
+      - "*"
+
 jobs:
   get_vars:
-    name: Get module variables from module.prop and config.prop
+    name: Get module variables from "module.prop" and "config.prop"
     runs-on: ubuntu-latest
     outputs:
       # Module.prop variables
-      id: ${{ steps.vars.outputs.id }}
-      name: ${{ steps.vars.outputs.name }}
-      version: ${{ steps.vars.outputs.version }}
-      versionCode: ${{ steps.vars.outputs.versionCode }}
-      author: ${{ steps.vars.outputs.author }}
-      description: ${{ steps.vars.outputs.description }}
+      id: ${{ steps.collect.outputs.id }}
+      name: ${{ steps.collect.outputs.name }}
+      version: ${{ steps.collect.outputs.version }}
+      versionCode: ${{ steps.collect.outputs.versionCode }}
+      author: ${{ steps.collect.outputs.author }}
+      description: ${{ steps.collect.outputs.description }}
+
       # Config.prop variables
-      zip_exclude: ${{ steps.vars.outputs.zip_exclude }}
-      changelog: ${{ steps.vars.outputs.changelog }}
+      zip_exclude: ${{ steps.collect.outputs.zip_exclude }}
+      changelog: ${{ steps.collect.outputs.changelog }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get variables
-        id: vars
-        run: bash .github/bin/variables.sh
+        run: ./.github/bin/variables.sh >> "${GITHUB_OUTPUT}"
+        id: collect
 
   create_release:
     name: Create release
-    needs:
-      - get_vars
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         name: Checkout
+
+      - name: Get variables
+        run: ./.github/bin/variables.sh >> "${GITHUB_ENV}"
+
       - name: Create module ZIP
-        id: zip
-        run: |
-          ZIPNAME=${{ needs.get_vars.outputs.id }}-${{ needs.get_vars.outputs.version }}.zip
-          echo zipname=$ZIPNAME >> $GITHUB_OUTPUT
-          zip -0qry ./$ZIPNAME * -x .github ${{ needs.get_vars.outputs.zip_exclude }}
-      
-      - name: Generate update JSON
-        run: bash .github/bin/updateJson.sh ${{ needs.get_vars.outputs.version }} ${{ needs.get_vars.outputs.versionCode }} ${{ needs.get_vars.outputs.changelog }} ${{ steps.zip.outputs.zipname }}
-      
+        run: ./.github/bin/createZip.sh >> "${GITHUB_ENV}"
+
+      - name: Add update JSON to module.prop
+        run: ./.github/bin/refineModule.sh
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ needs.get_vars.outputs.changelog }}
+            ${{ changelog }}
+            ${{ zipname }}
+            update.json
+
+      - name: Generate update JSON
+        run: bash .github/bin/updateJson.sh ${{ version }} ${{ versionCode }} ${{ changelog }} ${{ steps.zip.outputs.zipname }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ changelog }}
             ${{ steps.zip.outputs.zipname }}
             update.json
